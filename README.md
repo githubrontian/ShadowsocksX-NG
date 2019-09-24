@@ -1,31 +1,31 @@
 # ShadowsocksX-NG
 
-Current version is 1.7.1
+Current version is [v1.9.2](https://github.com/shadowsocks/ShadowsocksX-NG/releases/tag/v1.9.2)
 
-[![Build Status](https://travis-ci.org/shadowsocks/ShadowsocksX-NG.svg?branch=develop)](https://travis-ci.org/shadowsocks/ShadowsocksX-NG)
+[![Actions Status](https://github.com/shadowsocks/ShadowsocksX-NG/workflows/CI/badge.svg)](https://github.com/shadowsocks/ShadowsocksX-NG/actions)
 
 Next Generation of [ShadowsocksX](https://github.com/shadowsocks/shadowsocks-iOS)
 
-## Why?
+## Why a new implementation?
 
 It's hard to maintain the original implementation as there is too much unused code in it.
-It also embeds the `ss-local` source. It's crazy to maintain dependencies of `ss-local`.
+It also embeds the `ss-local` source code. It's crazy to maintain dependencies of `ss-local`.
 So it's hard to update the `ss-local` version.
 
 Now I just copied the `ss-local` from Homebrew. Run `ss-local` executable as a Launch Agent in the background.
-Serve PAC JS file as a file URL. So there is only some source code related to GUI left.
-Then I will rewrite the GUI code in Swift.
+So there is only some source code related to GUI left.
+Then I have rewrited the GUI code in Swift.
 
 ## Requirements
 
 ### Running
 
-- macOS 10.11+
+macOS 10.12+
 
 ### Building
 
-- Xcode 9.2+
-- CocoaPods 1.3.1+
+- Xcode 10.3+
+- CocoaPods 1.5.3+
 
 ## Download
 
@@ -33,25 +33,15 @@ From [here](https://github.com/shadowsocks/ShadowsocksX-NG/releases/)
 
 ## Features
 
-- Uses `ss-local` from shadowsocks-libev 3.0.5
+- `ss-local` from shadowsocks-libev 3.2.5.
+- Support SIP003 plugins. Embed `kcptun`,  `simple-obfs` and `v2ray-plugin`.
 - Could update PAC by download GFW List from GitHub.
-- Shows QRCode for current server profile.
-- Scans QRCode from screen.
-- Auto launch at login.
-- User rules for PAC.
+- Share your server profiles by qrcode or url.
+- Import server profile urls from pasteboard.
+- Import server profile by scan QRCode on screen.
+- Custom rules for PAC.
 - Support for [AEAD Ciphers](https://shadowsocks.org/en/spec/AEAD-Ciphers.html)
 - HTTP Proxy by [privoxy](http://www.privoxy.org/)
-- Over [kcptun](https://github.com/xtaci/kcptun). Version 20170322
-- Export/Import configure file.
-- An advanced preferences panel for configuring:
-	- Local SOCKS5 listen address.
-	- Local SOCKS5 listen port.
-	- Local SOCKS5 timeout.
-	- If enable UDP relay.
-	- GFW List URL.
-- Manually specify network service profiles which would be used to configure the proxy.
-- Could reorder shadowsocks profiles by drag-&-dropping in servers preferences panel.
-- Configurable global shortcuts for toggle running and switch proxy mode.
 
 ## Difference from original ShadowsocksX
 

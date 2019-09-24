@@ -38,52 +38,6 @@ class ServerProfileTests: XCTestCase {
         XCTAssertEqual(newProfile?.method, profile.method)
         XCTAssertEqual(newProfile?.password, profile.password)
         XCTAssertEqual(newProfile?.remark, profile.remark)
-        XCTAssertEqual(newProfile?.ota, profile.ota)
-    }
-
-    func testInitWithPlainURL() {
-        let url = URL(string: "ss://aes-256-cfb:password@example.com:8388")!
-
-        let profile = ServerProfile(url: url)
-
-        XCTAssertNotNil(profile)
-
-        XCTAssertEqual(profile?.serverHost, "example.com")
-        XCTAssertEqual(profile?.serverPort, 8388)
-        XCTAssertEqual(profile?.method, "aes-256-cfb")
-        XCTAssertEqual(profile?.password, "password")
-        XCTAssertEqual(profile?.remark, "")
-        XCTAssertEqual(profile?.ota, false)
-    }
-
-    func testInitWithPlainURLandQuery() {
-        let url = URL(string: "ss://aes-256-cfb:password@example.com:8388?Remark=Prism&OTA=true")!
-
-        let profile = ServerProfile(url: url)
-
-        XCTAssertNotNil(profile)
-
-        XCTAssertEqual(profile?.serverHost, "example.com")
-        XCTAssertEqual(profile?.serverPort, 8388)
-        XCTAssertEqual(profile?.method, "aes-256-cfb")
-        XCTAssertEqual(profile?.password, "password")
-        XCTAssertEqual(profile?.remark, "Prism")
-        XCTAssertEqual(profile?.ota, true)
-    }
-
-    func testInitWithPlainURLandAnotherQuery() {
-        let url = URL(string: "ss://aes-256-cfb:password@example.com:8388?Remark=Prism&OTA=0")!
-
-        let profile = ServerProfile(url: url)
-
-        XCTAssertNotNil(profile)
-
-        XCTAssertEqual(profile?.serverHost, "example.com")
-        XCTAssertEqual(profile?.serverPort, 8388)
-        XCTAssertEqual(profile?.method, "aes-256-cfb")
-        XCTAssertEqual(profile?.password, "password")
-        XCTAssertEqual(profile?.remark, "Prism")
-        XCTAssertEqual(profile?.ota, false)
     }
 
     func testInitWithBase64EncodedURL() {
@@ -99,7 +53,6 @@ class ServerProfileTests: XCTestCase {
         XCTAssertEqual(profile?.method, "aes-256-cfb")
         XCTAssertEqual(profile?.password, "password")
         XCTAssertEqual(profile?.remark, "")
-        XCTAssertEqual(profile?.ota, false)
     }
 
     func testInitWithBase64EncodedURLandQuery() {
@@ -115,7 +68,28 @@ class ServerProfileTests: XCTestCase {
         XCTAssertEqual(profile?.method, "aes-256-cfb")
         XCTAssertEqual(profile?.password, "password")
         XCTAssertEqual(profile?.remark, "Prism")
-        XCTAssertEqual(profile?.ota, true)
+    }
+    
+    func testInitWithLegacyBase64EncodedURLWithTag() {
+        let url = URL(string: "ss://YmYtY2ZiOnRlc3RAMTkyLjE2OC4xMDAuMTo4ODg4Cg#example-server")!
+        
+        let profile = ServerProfile(url: url)
+        
+        XCTAssertNotNil(profile)
+        XCTAssertEqual(profile?.remark, "example-server")
+    }
+    
+    func testInitWithLegacyBase64EncodedURLWithSymboInPassword() {
+        // Note that the legacy URI doesn't follow RFC3986. It means the password here
+        // should be plain text, not percent-encoded.
+        // Ref: https://shadowsocks.org/en/config/quick-guide.html
+        // `ss://bf-cfb:test/!@#:@192.168.100.1:8888`
+        let url = URL(string: "ss://YmYtY2ZiOnRlc3QvIUAjOkAxOTIuMTY4LjEwMC4xOjg4ODg#example")!
+        
+        let profile = ServerProfile(url: url)
+        
+        XCTAssertNotNil(profile)
+        XCTAssertEqual(profile?.password, "test/!@#:")
     }
 
     func testInitWithEmptyURL() {
@@ -148,7 +122,6 @@ class ServerProfileTests: XCTestCase {
         XCTAssertEqual(profile?.method, "aes-256-cfb")
         XCTAssertEqual(profile?.password, "password")
         XCTAssertEqual(profile?.remark, "Prism")
-        XCTAssertEqual(profile?.ota, true)
     }
 
     func testInitWithSIP002URLProfileName() {
@@ -168,6 +141,24 @@ class ServerProfileTests: XCTestCase {
         XCTAssertNotNil(profile)
         XCTAssertEqual(profile?.remark, "Overriden")
     }
+    
+    func testInitWithSIP002URLProfileWithSIP003PluginNoPluginOpts() {
+        let url = URL(string: "ss://YWVzLTI1Ni1jZmI6cGFzc3dvcmQ=@134.209.56.100:8088/?plugin=v2ray-plugin;#moon-v2ray")!
+        
+        let profile = ServerProfile(url: url)
+        
+        XCTAssertNotNil(profile)
+        XCTAssertEqual(profile?.plugin, "v2ray-plugin")
+    }
+    
+    func testInitWithSIP002URLProfileWithSIP003Plugin() {
+        let url = URL(string: "ss://YWVzLTI1Ni1jZmI6cGFzc3dvcmQ=@134.209.56.100:8088/?plugin=v2ray-plugin;tls#moon-v2ray")!
+        
+        let profile = ServerProfile(url: url)
+        
+        XCTAssertNotNil(profile)
+        XCTAssertEqual(profile?.plugin, "v2ray-plugin")
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
@@ -175,5 +166,6 @@ class ServerProfileTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
 
 }
